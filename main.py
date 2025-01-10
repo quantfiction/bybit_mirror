@@ -1,7 +1,10 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 import httpx
 import os
+import sys
 import time
 import hmac
 import hashlib
@@ -74,7 +77,22 @@ async def proxy_request(path: str, request: Request):
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+class RestartHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        if event.src_path.endswith('.py'):
+            print("Detected code change, restarting...")
+            os.execv(sys.executable, ['python'] + sys.argv)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    event_handler = RestartHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path='.', recursive=True)
+    observer.start()
+    
+    try:
+        uvicorn.run(app, host="0.0.0.0", port=8000)
+    finally:
+        observer.stop()
+        observer.join()
