@@ -48,6 +48,8 @@ async def proxy_request(path: str, request: Request):
             
             # Generate signature
             params_str = f"{timestamp}{API_KEY}{recv_window}"
+            if params:
+                params_str += str(params)
             if body:
                 params_str += body.decode("utf-8")
             signature = generate_signature(API_SECRET, params_str)
