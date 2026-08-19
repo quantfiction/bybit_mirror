@@ -28,8 +28,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-pipenv/
-Pipfile.lock
+
+# uv (uv.lock is committed for reproducible installs)
+.uv/
 
 # IDE
 .vscode/

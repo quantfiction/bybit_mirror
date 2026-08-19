@@ -1,0 +1,15 @@
+[project]
+name = "bybit-mirror"
+version = "0.1.0"
+description = "A signing proxy in front of Bybit's v5 REST API."
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.109.0",
+    "uvicorn==0.27.0",
+    "httpx==0.26.0",
+    "python-dotenv==1.0.0",
+    "watchdog==4.0.0",
+]
+
+[tool.uv]
+package = false
